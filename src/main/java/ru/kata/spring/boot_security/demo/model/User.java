@@ -1,71 +1,89 @@
 package ru.kata.spring.boot_security.demo.model;
 
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
-    @Column(name = "name")
-    private String name;
-    @Column(name = "surname")
-    private String surname;
-    @Column(name = "age")
-    private String age;
-    @Column(name = "email")
-    private String email;
-    @Column(name = "password")
-    private String password;
-    @Column(name = "role")
-    private String role;
+public class User implements UserDetails {
 
     public User() {
     }
 
-    public User(int id, String name, String surname, String age, String email, String password, String role) {
-        this.id = id;
-        this.name = name;
-        this.surname = surname;
-        this.age = age;
+    @Id
+    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "username")
+    private String username;
+    @Column(name = "fullname")
+    private String fullname;
+    @Column(name = "email")
+    private String email;
+    @Column(name = "password")
+    private String password;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",joinColumns = @JoinColumn(name ="user_id" ),
+    inverseJoinColumns = @JoinColumn(name ="role_id" ))
+    private List<Role> roles;
+
+    public User(String username, String fullname, String email, String password, List<Role> roles) {
+        this.username = username;
+        this.fullname = fullname;
         this.email = email;
         this.password = password;
-        this.role = role;
+        this.roles = roles;
+
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public String getSurname() {
-        return surname;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
-    public String getAge() {
-        return age;
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
-    public void setAge(String age) {
-        this.age = age;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getFullname() {
+        return fullname;
+    }
+
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 
     public String getEmail() {
@@ -76,6 +94,11 @@ public class User {
         this.email = email;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -84,24 +107,11 @@ public class User {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
+    public List<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", age='" + age + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
-                '}';
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 }

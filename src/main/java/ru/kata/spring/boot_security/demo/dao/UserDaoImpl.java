@@ -15,30 +15,34 @@ public class UserDaoImpl implements UserDao {
     private EntityManager entityManager;
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<User> getAllUsers() {
-
-        return entityManager.createQuery("FROM User ", User.class).getResultList();
-    }
-
-    @Override
-    public User getUser(int id) {
-
+    public User getUser(Long id) {
         return entityManager.find(User.class, id);
     }
 
     @Override
-    public void edit(int id, User user) {
-        entityManager.merge(user);
+    public List<User> getAllUsers() {
+        return entityManager.createQuery("from User", User.class).getResultList();
     }
 
     @Override
     public void add(User user) {
         entityManager.persist(user);
+
     }
 
     @Override
-    public void delete(int id) {
+    public void edit(User user) {
+        entityManager.merge(user);
+    }
+
+    @Override
+    public User findByName(String email) {      // username меняем на email
+        return entityManager.createQuery("select u from User u join fetch u.roles where u.email = :email", User.class).setParameter("email", email)
+                .getResultList().stream().findAny().orElse(null);
+    }
+
+    @Override
+    public void delete(Long id) {
         entityManager.remove(getUser(id));
     }
 }

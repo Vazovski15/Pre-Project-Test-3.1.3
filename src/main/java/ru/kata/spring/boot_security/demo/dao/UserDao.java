@@ -9,13 +9,15 @@ import ru.kata.spring.boot_security.demo.model.User;
 import java.util.List;
 
 public interface UserDao {
-    User getUser(int id);
+    User getUser(Long id);
 
     List<User> getAllUsers();
 
-    void edit(int id, User user);
+    void add(User user);                 // пришлось изменить метод,
 
-    void add(User user);
+    void edit(User user);
 
-    void delete(int id);
+    User findByName(String email);
+
+    void delete(Long id);
 }
